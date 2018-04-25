@@ -2,6 +2,9 @@ TDD, Nodejs Server API server 개발 3
 ==================================
 
 
+> - **Note**
+> - TDD 방법론을 활용한 Nodejs API Server 개발 2 => https://github.com/phantasmicmeans/nodejs_API_tutorial2
+
 api/user로 분리된 API에서 Controller단 분리
 ------------------------------
 
