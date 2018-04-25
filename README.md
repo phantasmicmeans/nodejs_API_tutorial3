@@ -45,6 +45,7 @@ api/user로 분리된 API에서 Controller단 분리
         res.json(user);
     }
     
+    module.exports = {index, show};
 ```
 
 ### 2. {Projectfolder}/api/user/index.js 변경 ###
