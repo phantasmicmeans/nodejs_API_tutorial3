@@ -1,6 +1,6 @@
-TDD, Nodejs Server API server 개발 1
+TDD, Nodejs Server API server 개발 3
 ==================================
-Author : SangMin LEE
+
 
 api/user로 분리된 API에서 Controller단 분리
 ------------------------------
@@ -9,7 +9,7 @@ api/user로 분리된 API에서 Controller단 분리
 
 **{Projectfolder}/api/user/user.ctrl.js 예시**
 
-
+```javascript
     let users = [
         {id: 1, name: 'Alice'},
         {id: 2, name: 'Bek'},
@@ -44,12 +44,14 @@ api/user로 분리된 API에서 Controller단 분리
 
         res.json(user);
     }
-
+    
+```
 
 ### 2. {Projectfolder}/api/user/index.js 변경 ###
 
 **{Projectfolder}/api/user/index.js 예시**
 
+```javascript
     const express = require('express');
     const router = express.Router();
     const ctrl = require('./user.ctrl');
@@ -58,11 +60,13 @@ api/user로 분리된 API에서 Controller단 분리
     router.get('/:id', ctrl.show);
 
     module.exports = router;
+```
 
 ### 3. {Projectfolder}/index.js 변경 ###
 
 **{Projectfolder}/index.js 예시**
 
+```javascript
     var express = require('express');
     var morgan = require('morgan');
     var bodyParser = require('body-parser');
@@ -79,6 +83,6 @@ api/user로 분리된 API에서 Controller단 분리
     app.use('/users', user);
 
     module.exports = app;
-
+```
 
 
