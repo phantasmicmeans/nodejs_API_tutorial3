@@ -1,88 +1,22 @@
-TDD, Nodejs Server API server 개발2
+TDD, Nodejs Server API server 개발 1
 ==================================
 Author : SangMin LEE
 
-api/user/로 API 분리
---------------------
+api/user로 분리된 API에서 Controller단 분리
+------------------------------
 
-## 1. 기존 API Server는 Project folder의 index.js에 통짜구조를 가짐. ##
+### 1. user.ctrl.js 추가 ###
 
->  기존 Project folder의 index.js예시 
-
-**{Projectfolder}/index.js**
+**{Projectfolder}/api/user/user.ctrl.js 예시**
 
 
-    const express = require('express')
-    const logger = require('morgan')
-    const bodyParser = require('body-parser')
-    const app = express()
+    let users = [
+        {id: 1, name: 'Alice'},
+        {id: 2, name: 'Bek'},
+        {id: 3, name: 'Chris'}
+    ]
 
-    app.use(logger('dev'))
-    app.use(bodyParser.json())
-    app.use(bodyParser.urlencoded({extended: true}))
-
-    //유저 전체 get
-    app.get('/users', (req,res) => {
-        req.query.limit = req.query.limit || 10;
-        const limit = parseInt(req.query.limit, 10)
-        console.log("limit:", limit)
-        if (Number.isNaN(limit)){
-            res.status(400).end()
-        }
-        else {
-            res.json(users.slice(0, limit));
-        }
-    })
-    //유저 get
-    app.get('/users/:id', (req,res) =>{
-
-        const id  = parseInt(req.params.id, 10)
-        if (Number.isNaN(id))
-        {
-            return res.status(400).end()
-        }
-        const user = users.filter(user => user.id === id)[0]
-
-        if (!user){
-            return res.status(404).end()
-        }
-
-        res.json(user)
-    })
-
-
-## 2. {Projectfolder}/api/user/로 API분리 ##
-
-> /api/user/index.js로 API분리 예시
-
-**a. {Projectfolder}/index.js**
-
-
-    var express = require('express');
-    var morgan = require('morgan');
-    var bodyParser = require('body-parser');
-    var app = express();
-    var user = require('./api/user');
-
-    if (process.env.NODE_ENV !== 'test')
-    {
-        app.use(morgan('dev'));
-    }
-
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({extended: true}));
-
-    app.use(user);
-
-    module.exports = app;
-
-
-**b. {Projectfolder}/api/user/index.js**
-
-    const express = require('express');
-    const router = express.Router();
-
-    router.get('/users', (req,res) => {
+    const index =(req,res) => {
 
         req.query.limit = req.query.limit || 10;
         const limit = parseInt(req.query.limit, 10);
@@ -93,9 +27,9 @@ api/user/로 API 분리
         else {
             res.json(users.slice(0, limit));
         }
-    });
+    }
 
-    router.get('/users/:id', (req,res) =>{
+    const show = (req,res) =>{
 
         const id  = parseInt(req.params.id, 10);
         if (Number.isNaN(id))
@@ -109,33 +43,41 @@ api/user/로 API 분리
         }
 
         res.json(user);
-    });
+    }
+
+
+### 2. {Projectfolder}/api/user/index.js 변경 ###
+
+**{Projectfolder}/api/user/index.js 예시**
+
+    const express = require('express');
+    const router = express.Router();
+    const ctrl = require('./user.ctrl');
+
+    router.get('/', ctrl.index);
+    router.get('/:id', ctrl.show);
 
     module.exports = router;
 
+### 3. {Projectfolder}/index.js 변경 ###
 
+**{Projectfolder}/index.js 예시**
 
-## npm install ##
-> - **necessary module install**
-> -     $npm init (package.json 파일 생성) 
-> -     $npm install express --save
-> -     $npm install body-parser --save
-> -     $npm install morgan --save
-
-> - **test module install** 
-> -     $npm install mocha --save-dev
-> -     $npm install should --save-dev
-> -     $npm install supertest --save-dev
-
-> - **npm start or npm test**
-> -     $npm start (or) npm test
-
-## Package.json Script ##
-
-**{Projectfolder}/package.json**   
-
-    "scripts": {
-        "start": "node bin/www.js"
-        "test": "NODE_ENV=test mocha api/user/user.spec.js -w"
+    var express = require('express');
+    var morgan = require('morgan');
+    var bodyParser = require('body-parser');
+    var app = express();
+    var user = require('./api/user');
+    
+    if (process.env.NODE_ENV !== 'test')
+    {
+        app.use(morgan('dev'));
     }
+
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: true}));
+    app.use('/users', user);
+
+    module.exports = app;
+
 
